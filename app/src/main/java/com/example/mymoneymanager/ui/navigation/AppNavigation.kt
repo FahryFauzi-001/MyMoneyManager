@@ -4,6 +4,11 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -57,6 +62,7 @@ import com.example.mymoneymanager.ui.screens.AddTransactionScreen
 import com.example.mymoneymanager.ui.screens.MoreSettingsScreen
 import com.example.mymoneymanager.ui.screens.QuickOnboardingScreen
 import com.example.mymoneymanager.ui.screens.SecurityLockScreen
+import com.example.mymoneymanager.ui.screens.SplashScreen
 import com.example.mymoneymanager.ui.screens.StatisticsScreen
 import com.example.mymoneymanager.ui.screens.TransactionsScreen
 import com.example.mymoneymanager.ui.security.BiometricHelper
@@ -106,22 +112,40 @@ private val topLevelDestinations = listOf(
 @Composable
 fun AppNavigation(
     startState: StartState,
-    viewModelFactory: ViewModelFactory
+    viewModelFactory: ViewModelFactory,
+    showInitialSplash: Boolean = true,
+    onPreload: suspend () -> Unit = {}
 ) {
-    if (startState == StartState.Loading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        )
-        return
-    }
+    var isSplashActive by rememberSaveable(showInitialSplash) { mutableStateOf(showInitialSplash) }
 
-    key(startState) {
-        AppNavHost(
-            startState = startState,
-            factory = viewModelFactory
-        )
+    AnimatedContent(
+        targetState = isSplashActive,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(400)) togetherWith fadeOut(animationSpec = tween(400))
+        },
+        label = "SplashToNavHostTransition"
+    ) { showSplash ->
+        if (showSplash) {
+            SplashScreen(
+                onPreload = onPreload,
+                onSplashFinished = { isSplashActive = false }
+            )
+        } else {
+            if (startState == StartState.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                )
+            } else {
+                key(startState) {
+                    AppNavHost(
+                        startState = startState,
+                        factory = viewModelFactory
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -280,10 +304,10 @@ private fun TransactionsRoute(
         onOpenLinkBankDialog = { viewModel.openLinkBankDialog() },
         onCloseLinkBankDialog = { viewModel.closeLinkBankDialog() },
         onSelectBank = { bankName -> viewModel.simulateLinkBank(bankName) },
-        onNavigateToTransfer = {
-            navController.navigate(Routes.addTransaction(UiTransactionType.TRANSFER))
+        onNavigateToAddIncome = {
+            navController.navigate(Routes.addTransaction(UiTransactionType.INCOME))
         },
-        onNavigateToAddTransaction = {
+        onNavigateToAddExpense = {
             navController.navigate(Routes.addTransaction(UiTransactionType.EXPENSE))
         },
         onLoadSampleData = { viewModel.loadSampleData() },
@@ -475,13 +499,12 @@ private fun AddTransactionRoute(
         categories = state.categories,
         currencySymbol = state.currencySymbol,
         selectedDate = LocalDate.now(),
-        onSaveClick = { type, amountMinor, date, sourceAccountId, destinationAccountId, categoryId, note ->
+        onSaveClick = { type, amountMinor, date, sourceAccountId, categoryId, note ->
             viewModel.saveTransaction(
                 type = type,
                 amountMinor = amountMinor,
                 date = date,
                 sourceAccountId = sourceAccountId,
-                destinationAccountId = destinationAccountId,
                 categoryId = categoryId,
                 note = note
             )

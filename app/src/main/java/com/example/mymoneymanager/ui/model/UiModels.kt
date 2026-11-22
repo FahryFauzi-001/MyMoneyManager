@@ -26,8 +26,7 @@ data class UiCategory(
 
 enum class UiTransactionType {
     INCOME,
-    EXPENSE,
-    TRANSFER
+    EXPENSE
 }
 
 data class UiTransaction(

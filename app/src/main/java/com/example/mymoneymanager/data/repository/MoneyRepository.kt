@@ -116,39 +116,35 @@ class MoneyRepository(
             )
         }
 
+    suspend fun preload() {
+        db.withTransaction {
+            accountDao.getAllOnce()
+            categoryDao.getAllOnce()
+        }
+    }
+
     suspend fun saveTransaction(
         type: UiTransactionType,
         amountMinor: Long,
         date: LocalDate,
         sourceAccountId: Long?,
-        destinationAccountId: Long?,
         categoryId: Long?,
         note: String
     ): Long {
+        require(type in listOf(UiTransactionType.INCOME, UiTransactionType.EXPENSE)) {
+            "Tipe transaksi hanya boleh Pemasukan atau Pengeluaran."
+        }
         require(amountMinor > 0L) { "Nominal harus lebih dari 0." }
         val sourceId = requireNotNull(sourceAccountId) { "Pilih rekening sumber." }
-        val destinationId = if (type == UiTransactionType.TRANSFER) {
-            requireNotNull(destinationAccountId) { "Pilih rekening tujuan." }
-                .also { require(it != sourceId) { "Rekening sumber dan tujuan harus berbeda." } }
-        } else {
-            null
-        }
+        val category = categoryId?.let { categoryDao.getById(it) }
+            ?: error("Kategori transaksi harus dipilih.")
 
         return db.withTransaction {
             val source = accountDao.getById(sourceId) ?: error("Rekening sumber tidak ditemukan.")
-            val destination = destinationId?.let {
-                accountDao.getById(it) ?: error("Rekening tujuan tidak ditemukan.")
-            }
-            val category = if (type == UiTransactionType.TRANSFER) {
-                null
-            } else {
-                categoryId?.let { categoryDao.getById(it) }
-            }
 
             val title = when (type) {
-                UiTransactionType.TRANSFER -> "Transfer ke ${destination?.name}"
-                UiTransactionType.INCOME -> category?.name ?: "Pemasukan"
-                UiTransactionType.EXPENSE -> category?.name ?: "Pengeluaran"
+                UiTransactionType.INCOME -> category.name.ifBlank { "Pemasukan" }
+                UiTransactionType.EXPENSE -> category.name.ifBlank { "Pengeluaran" }
             }
 
             val entity = TxnEntity(
@@ -158,8 +154,7 @@ class MoneyRepository(
                 dateMillis = date.toEpochMillisUtc(),
                 accountId = sourceId,
                 accountName = source.name,
-                destinationAccountId = destinationId,
-                categoryId = category?.id,
+                categoryId = category.id,
                 note = note.trim()
             )
             val id = txnDao.insert(entity)
@@ -178,14 +173,10 @@ class MoneyRepository(
 
     private suspend fun applyBalanceEffect(txn: TxnEntity, direction: Int) {
         val delta = txn.amountMinor * direction
-        val srcId = txn.accountId
+        val srcId = txn.accountId ?: return
         when (txn.type) {
-            UiTransactionType.INCOME -> if (srcId != null) accountDao.adjustBalance(srcId, delta)
-            UiTransactionType.EXPENSE -> if (srcId != null) accountDao.adjustBalance(srcId, -delta)
-            UiTransactionType.TRANSFER -> {
-                if (srcId != null) accountDao.adjustBalance(srcId, -delta)
-                txn.destinationAccountId?.let { accountDao.adjustBalance(it, delta) }
-            }
+            UiTransactionType.INCOME -> accountDao.adjustBalance(srcId, delta)
+            UiTransactionType.EXPENSE -> accountDao.adjustBalance(srcId, -delta)
         }
     }
 
@@ -387,18 +378,18 @@ class MoneyRepository(
     ) {
         val today = LocalDate.now()
         val demoItems = listOf(
-            DemoTxn(UiTransactionType.INCOME, "Gaji Bulanan", 8_500_000L, today.withDayOfMonth(1), bankId, "BCA", null, catSalary, "Gaji pokok bulan ini"),
-            DemoTxn(UiTransactionType.EXPENSE, "Makan Siang & Kopi", 85_000L, today, cashId, "Kas Tunai", null, catFood, "Waroeng & kopi susu"),
-            DemoTxn(UiTransactionType.EXPENSE, "Transportasi Harian", 120_000L, today.minusDays(1), cashId, "Kas Tunai", null, catTransport, "Ojek online & tol"),
-            DemoTxn(UiTransactionType.EXPENSE, "Belanja Kebutuhan Rumah", 460_000L, today.minusDays(2), bankId, "BCA", null, catShop, "Supermarket bulanan"),
-            DemoTxn(UiTransactionType.EXPENSE, "Tagihan Listrik & Internet", 680_000L, today.minusDays(3), bankId, "BCA", null, catBills, "PLN + WiFi rumah"),
-            DemoTxn(UiTransactionType.EXPENSE, "Makan Malam Keluarga", 245_000L, today.minusDays(4), bankId, "BCA", null, catFood, "Resto nusantara"),
+            DemoTxn(UiTransactionType.INCOME, "Gaji Bulanan", 8_500_000L, today.withDayOfMonth(1), bankId, "BCA", catSalary, "Gaji pokok bulan ini"),
+            DemoTxn(UiTransactionType.EXPENSE, "Makan Siang & Kopi", 85_000L, today, cashId, "Kas Tunai", catFood, "Waroeng & kopi susu"),
+            DemoTxn(UiTransactionType.EXPENSE, "Transportasi Harian", 120_000L, today.minusDays(1), cashId, "Kas Tunai", catTransport, "Ojek online & tol"),
+            DemoTxn(UiTransactionType.EXPENSE, "Belanja Kebutuhan Rumah", 460_000L, today.minusDays(2), bankId, "BCA", catShop, "Supermarket bulanan"),
+            DemoTxn(UiTransactionType.EXPENSE, "Tagihan Listrik & Internet", 680_000L, today.minusDays(3), bankId, "BCA", catBills, "PLN + WiFi rumah"),
+            DemoTxn(UiTransactionType.EXPENSE, "Makan Malam Keluarga", 245_000L, today.minusDays(4), bankId, "BCA", catFood, "Resto nusantara"),
             // Historical 5 months for 6-month Bar Chart trend
-            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_850_000L, today.minusMonths(1).withDayOfMonth(12), bankId, "BCA", null, catFood, "Arsip bulan lalu"),
-            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_420_000L, today.minusMonths(2).withDayOfMonth(14), bankId, "BCA", null, catShop, "Arsip 2 bulan lalu"),
-            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 2_100_000L, today.minusMonths(3).withDayOfMonth(10), bankId, "BCA", null, catBills, "Arsip 3 bulan lalu"),
-            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_280_000L, today.minusMonths(4).withDayOfMonth(15), cashId, "Kas Tunai", null, catTransport, "Arsip 4 bulan lalu"),
-            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_650_000L, today.minusMonths(5).withDayOfMonth(11), bankId, "BCA", null, catFood, "Arsip 5 bulan lalu")
+            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_850_000L, today.minusMonths(1).withDayOfMonth(12), bankId, "BCA", catFood, "Arsip bulan lalu"),
+            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_420_000L, today.minusMonths(2).withDayOfMonth(14), bankId, "BCA", catShop, "Arsip 2 bulan lalu"),
+            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 2_100_000L, today.minusMonths(3).withDayOfMonth(10), bankId, "BCA", catBills, "Arsip 3 bulan lalu"),
+            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_280_000L, today.minusMonths(4).withDayOfMonth(15), cashId, "Kas Tunai", catTransport, "Arsip 4 bulan lalu"),
+            DemoTxn(UiTransactionType.EXPENSE, "Pengeluaran Bulanan", 1_650_000L, today.minusMonths(5).withDayOfMonth(11), bankId, "BCA", catFood, "Arsip 5 bulan lalu")
         )
 
         demoItems.forEach { item ->
@@ -409,7 +400,6 @@ class MoneyRepository(
                 dateMillis = item.date.toEpochMillisUtc(),
                 accountId = item.accountId,
                 accountName = item.accountName,
-                destinationAccountId = item.destinationAccountId,
                 categoryId = item.categoryId,
                 note = item.note
             )
@@ -427,7 +417,6 @@ class MoneyRepository(
         val date: LocalDate,
         val accountId: Long,
         val accountName: String,
-        val destinationAccountId: Long?,
         val categoryId: Long?,
         val note: String
     )
@@ -438,11 +427,10 @@ class MoneyRepository(
     suspend fun verifyPin(pin: String): Boolean = preferences.verifyPin(pin)
 
     suspend fun exportTransactionsCsv(): String {
-        val accountNames = accountDao.getAllOnce().associate { it.id to it.name }
         val rows = txnDao.getAllWithDetailsOnce()
 
         val header = listOf(
-            "Tanggal", "Tipe", "Judul", "Rekening", "Ke Rekening", "Kategori", "Nominal", "Catatan"
+            "Tanggal", "Tipe", "Judul", "Rekening", "Kategori", "Nominal", "Catatan"
         )
 
         return buildString {
@@ -455,7 +443,6 @@ class MoneyRepository(
                     t.type.name,
                     t.title,
                     sourceName,
-                    t.destinationAccountId?.let { accountNames[it] }.orEmpty(),
                     row.category?.name.orEmpty(),
                     t.amountMinor.toString(),
                     t.note

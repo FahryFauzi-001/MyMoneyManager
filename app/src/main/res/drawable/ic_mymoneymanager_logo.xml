@@ -1,0 +1,91 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Ambient Shadow / Soft Base -->
+    <path
+        android:fillColor="#102D5A27"
+        android:pathData="M24,44 L86,44 A12,12 0 0,1 98,56 L98,84 A12,12 0 0,1 86,96 L24,96 A12,12 0 0,1 12,84 L12,56 A12,12 0 0,1 24,44 Z" />
+
+    <!-- Minimalist Leather-Fold Wallet Outer Body -->
+    <path
+        android:pathData="M26,42 H84 A10,10 0 0,1 94,52 V82 A10,10 0 0,1 84,92 H26 A10,10 0 0,1 16,82 V52 A10,10 0 0,1 26,42 Z"
+        android:strokeWidth="3.5"
+        android:strokeColor="#2D5A27"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Wallet Back Spine / Layer Outline -->
+    <path
+        android:pathData="M22,42 V36 A6,6 0 0,1 28,30 H78 A6,6 0 0,1 84,36 V42"
+        android:strokeWidth="2.5"
+        android:strokeColor="#3E6B35"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <!-- Leather Stitch Detail -->
+    <path
+        android:pathData="M26,47 H84"
+        android:strokeWidth="1.2"
+        android:strokeColor="#7BAA74"
+        android:strokeLineCap="round" />
+
+    <!-- Center Fold Divider -->
+    <path
+        android:pathData="M52,44 V90"
+        android:strokeWidth="1.5"
+        android:strokeColor="#9EC398"
+        android:strokeLineCap="round" />
+
+    <!-- Leather Flap Fold with Clasp (Right Flap) -->
+    <path
+        android:pathData="M76,55 H96 A6,6 0 0,1 102,61 V73 A6,6 0 0,1 96,79 H76"
+        android:strokeWidth="3"
+        android:strokeColor="#2D5A27"
+        android:fillColor="#EAF2E8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Clasp Stud / Metallic Button -->
+    <path
+        android:pathData="M92,67 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0"
+        android:fillColor="#2D5A27" />
+
+    <!-- Dynamic Dual-Tone Currency Flow Accent 1: Emerald Inflow Wave -->
+    <path
+        android:pathData="M30,72 C42,50 68,36 94,40 C106,42 112,49 114,56"
+        android:strokeWidth="3.5"
+        android:strokeColor="#2E7D32"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <!-- Dynamic Dual-Tone Currency Flow Accent 2: Gold Prosperity Counter-Flow -->
+    <path
+        android:pathData="M38,82 C55,95 82,92 100,80 C108,74 113,67 114,56"
+        android:strokeWidth="2.8"
+        android:strokeColor="#F59E0B"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <!-- Floating Financial Sparkles / Geometric Coins -->
+    <!-- Top Sparkle -->
+    <path
+        android:pathData="M100,24 L102,30 L108,32 L102,34 L100,40 L98,34 L92,32 L98,30 Z"
+        android:fillColor="#F59E0B" />
+
+    <!-- Geometric Coin Accent (Emerald Ring) -->
+    <path
+        android:pathData="M38,32 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0"
+        android:strokeWidth="1.8"
+        android:strokeColor="#2E7D32"
+        android:fillColor="#D7EFD8" />
+
+    <!-- Micro Star Sparkle Bottom Left -->
+    <path
+        android:pathData="M18,36 L19,40 L23,41 L19,42 L18,46 L17,42 L13,41 L17,40 Z"
+        android:fillColor="#10B981" />
+
+</vector>

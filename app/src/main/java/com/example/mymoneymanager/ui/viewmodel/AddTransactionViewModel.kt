@@ -62,13 +62,12 @@ class AddTransactionViewModel(
         amountMinor: Long,
         date: LocalDate,
         sourceAccountId: Long?,
-        destinationAccountId: Long?,
         categoryId: Long?,
         note: String
     ) {
         if (isSaving.value) return
 
-        val validationError = validate(type, amountMinor, sourceAccountId, destinationAccountId, categoryId)
+        val validationError = validate(type, amountMinor, sourceAccountId, categoryId)
         if (validationError != null) {
             _events.trySend(AddTransactionEvent.Error(validationError))
             return
@@ -82,7 +81,6 @@ class AddTransactionViewModel(
                     amountMinor = amountMinor,
                     date = date,
                     sourceAccountId = sourceAccountId,
-                    destinationAccountId = destinationAccountId,
                     categoryId = categoryId,
                     note = note
                 )
@@ -101,16 +99,13 @@ class AddTransactionViewModel(
         type: UiTransactionType,
         amountMinor: Long,
         sourceAccountId: Long?,
-        destinationAccountId: Long?,
         categoryId: Long?
     ): String? = when {
+        type != UiTransactionType.INCOME && type != UiTransactionType.EXPENSE ->
+            "Tipe transaksi hanya boleh Pemasukan atau Pengeluaran."
         amountMinor <= 0L -> "Masukkan nominal lebih dari 0."
         sourceAccountId == null -> "Pilih rekening sumber."
-        type == UiTransactionType.TRANSFER && destinationAccountId == null ->
-            "Pilih rekening tujuan."
-        type == UiTransactionType.TRANSFER && destinationAccountId == sourceAccountId ->
-            "Rekening sumber dan tujuan harus berbeda."
-        type != UiTransactionType.TRANSFER && categoryId == null -> "Pilih kategori transaksi."
+        categoryId == null -> "Pilih kategori transaksi."
         else -> null
     }
 }

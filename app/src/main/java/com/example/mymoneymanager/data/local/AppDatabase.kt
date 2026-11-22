@@ -25,7 +25,7 @@ import com.example.mymoneymanager.ui.model.UiAccountType
         TxnEntity::class,
         BudgetEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -85,6 +85,45 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS transactions_v3 (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        title TEXT NOT NULL,
+                        amountMinor INTEGER NOT NULL,
+                        type TEXT NOT NULL,
+                        dateMillis INTEGER NOT NULL,
+                        accountId INTEGER,
+                        accountName TEXT NOT NULL,
+                        categoryId INTEGER,
+                        note TEXT NOT NULL,
+                        FOREIGN KEY(accountId) REFERENCES accounts(id) ON UPDATE NO ACTION ON DELETE SET NULL,
+                        FOREIGN KEY(categoryId) REFERENCES categories(id) ON UPDATE NO ACTION ON DELETE SET NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    INSERT INTO transactions_v3 (
+                        id, title, amountMinor, type, dateMillis, accountId, accountName, categoryId, note
+                    )
+                    SELECT
+                        t.id, t.title, t.amountMinor, t.type, t.dateMillis, t.accountId,
+                        t.accountName, t.categoryId, t.note
+                    FROM transactions t
+                    WHERE t.type IN ('INCOME', 'EXPENSE')
+                    """.trimIndent()
+                )
+                db.execSQL("DROP TABLE transactions")
+                db.execSQL("ALTER TABLE transactions_v3 RENAME TO transactions")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_transactions_accountId ON transactions (accountId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_transactions_categoryId ON transactions (categoryId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_transactions_dateMillis ON transactions (dateMillis)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: build(context.applicationContext).also { INSTANCE = it }
@@ -92,7 +131,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun build(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .fallbackToDestructiveMigration(dropAllTables = true)
                 .addCallback(SeedCallback)
                 .build()
     }

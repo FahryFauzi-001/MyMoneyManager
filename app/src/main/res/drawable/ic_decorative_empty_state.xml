@@ -1,0 +1,73 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="160dp"
+    android:viewportWidth="160"
+    android:viewportHeight="160">
+
+    <!-- Subtle Flow Curves (Alpha ~ 0.10) -->
+    <path
+        android:pathData="M 15,95 C 45,60 85,130 145,75"
+        android:strokeWidth="2"
+        android:strokeColor="#1E2D5A27"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M 25,115 C 65,80 95,145 150,95"
+        android:strokeWidth="1.5"
+        android:strokeColor="#182D5A27"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <!-- Central Outer Accent Ring -->
+    <path
+        android:pathData="M80,80 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#162D5A27"
+        android:fillColor="#082D5A27" />
+
+    <!-- Middle Ring -->
+    <path
+        android:pathData="M80,80 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0"
+        android:strokeWidth="1.2"
+        android:strokeColor="#1E2D5A27"
+        android:fillColor="#00000000" />
+
+    <!-- Faint Geometric Coin Top Left -->
+    <path
+        android:pathData="M38,42 m-14,0 a14,14 0 1,1 28,0 a14,14 0 1,1 -28,0"
+        android:strokeWidth="1.6"
+        android:strokeColor="#222D5A27"
+        android:fillColor="#0E2D5A27" />
+    <path
+        android:pathData="M38,42 m-9,0 a9,9 0 1,1 18,0 a9,9 0 1,1 -9,0"
+        android:strokeWidth="1"
+        android:strokeColor="#1A2D5A27"
+        android:fillColor="#00000000" />
+
+    <!-- Faint Geometric Coin Bottom Right -->
+    <path
+        android:pathData="M125,120 m-12,0 a12,12 0 1,1 24,0 a12,12 0 1,1 -24,0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#202D5A27"
+        android:fillColor="#0C2D5A27" />
+
+    <!-- Currency Sparkles -->
+    <!-- Top Right Sparkle -->
+    <path
+        android:pathData="M124,34 L126,39 L131,41 L126,43 L124,48 L122,43 L117,41 L122,39 Z"
+        android:fillColor="#242E7D32" />
+
+    <!-- Bottom Left Sparkle -->
+    <path
+        android:pathData="M32,120 L33.5,123.5 L37,125 L33.5,126.5 L32,130 L30.5,126.5 L27,125 L30.5,123.5 Z"
+        android:fillColor="#222E7D32" />
+
+    <!-- Floating Gold Coin Accent Center Right -->
+    <path
+        android:pathData="M136,75 m-6,0 a6,6 0 1,1 12,0 a6,6 0 1,1 -12,0"
+        android:strokeWidth="1.2"
+        android:strokeColor="#24F59E0B"
+        android:fillColor="#10F59E0B" />
+
+</vector>

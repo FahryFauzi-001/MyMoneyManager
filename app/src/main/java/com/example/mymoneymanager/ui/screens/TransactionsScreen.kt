@@ -1,5 +1,6 @@
 package com.example.mymoneymanager.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,8 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.SyncAlt
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Card
@@ -42,11 +43,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mymoneymanager.R
 import com.example.mymoneymanager.ui.components.LinkBankModal
 import com.example.mymoneymanager.ui.model.UiTransaction
 import com.example.mymoneymanager.ui.model.UiTransactionType
@@ -65,16 +71,16 @@ fun TransactionsScreen(
     onOpenLinkBankDialog: () -> Unit,
     onCloseLinkBankDialog: () -> Unit,
     onSelectBank: (String) -> Unit,
-    onNavigateToTransfer: () -> Unit,
-    onNavigateToAddTransaction: () -> Unit,
+    onNavigateToAddIncome: () -> Unit,
+    onNavigateToAddExpense: () -> Unit,
     onLoadSampleData: () -> Unit,
-    onTransactionClick: (UiTransaction) -> Unit
+    onTransactionClick: (UiTransaction) -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onNavigateToAddTransaction,
+                onClick = onNavigateToAddExpense,
                 containerColor = ForestGradientEnd,
                 contentColor = Color.White,
                 shape = CircleShape
@@ -95,8 +101,8 @@ fun TransactionsScreen(
                 state = state,
                 onToggleVisibility = onToggleBalanceVisibility,
                 onLinkBankClick = onOpenLinkBankDialog,
-                onTransferClick = onNavigateToTransfer,
-                onAddTransactionClick = onNavigateToAddTransaction
+                onAddIncomeClick = onNavigateToAddIncome,
+                onAddExpenseClick = onNavigateToAddExpense
             )
 
             Row(
@@ -132,24 +138,40 @@ fun TransactionsScreen(
                         .padding(bottom = 72.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Non-interactive decorative vector background overlay
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_decorative_empty_state),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(200.dp)
+                            .graphicsLayer(alpha = 0.12f)
+                            .clearAndSetSemantics { }
+                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ReceiptLong,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.outlineVariant,
-                            modifier = Modifier.size(60.dp)
+                            modifier = Modifier.size(56.dp)
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Belum ada transaksi",
+                            text = "Belum Ada Transaksi",
                             fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Tekan tombol + untuk mencatat transaksi Anda",
+                            text = "Tekan tombol + untuk mencatat pengeluaran atau pemasukan baru",
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.outline
+                            color = MaterialTheme.colorScheme.outline,
+                            lineHeight = 16.sp
                         )
                     }
                 }
@@ -189,8 +211,8 @@ private fun HeaderBalanceCard(
     state: TransactionsUiState,
     onToggleVisibility: () -> Unit,
     onLinkBankClick: () -> Unit,
-    onTransferClick: () -> Unit,
-    onAddTransactionClick: () -> Unit
+    onAddIncomeClick: () -> Unit,
+    onAddExpenseClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -207,9 +229,20 @@ private fun HeaderBalanceCard(
                         colors = listOf(ForestGradientStart, ForestGradientEnd)
                     )
                 )
-                .padding(20.dp)
         ) {
-            Column {
+            // Non-interactive decorative micro-vector accents overlay (low opacity ~ 0.12)
+            Image(
+                painter = painterResource(id = R.drawable.ic_decorative_card_accents),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer(alpha = 0.12f)
+                    .clearAndSetSemantics { }
+            )
+
+            // Foreground interactive content layer
+            Column(modifier = Modifier.padding(20.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -264,21 +297,21 @@ private fun HeaderBalanceCard(
                 ) {
                     QuickActionPill(
                         icon = Icons.Default.AccountBalance,
-                        title = "+ Hubung Bank",
+                        title = "+ Bank",
                         onClick = onLinkBankClick,
-                        modifier = Modifier.weight(1.2f)
-                    )
-                    QuickActionPill(
-                        icon = Icons.Default.SyncAlt,
-                        title = "Transfer",
-                        onClick = onTransferClick,
                         modifier = Modifier.weight(1f)
                     )
                     QuickActionPill(
-                        icon = Icons.Default.AddCircleOutline,
-                        title = "Catat",
-                        onClick = onAddTransactionClick,
-                        modifier = Modifier.weight(0.9f)
+                        icon = Icons.Default.ArrowDownward,
+                        title = "+ Pemasukan",
+                        onClick = onAddIncomeClick,
+                        modifier = Modifier.weight(1.2f)
+                    )
+                    QuickActionPill(
+                        icon = Icons.Default.ArrowUpward,
+                        title = "- Pengeluaran",
+                        onClick = onAddExpenseClick,
+                        modifier = Modifier.weight(1.25f)
                     )
                 }
             }
@@ -336,22 +369,18 @@ private fun TransactionRowItem(
         )
     }
     val isIncome = transaction.type == UiTransactionType.INCOME
-    val isTransfer = transaction.type == UiTransactionType.TRANSFER
 
     val badgeBg = when (transaction.type) {
         UiTransactionType.INCOME -> Color(0xFFE8F5E9)
         UiTransactionType.EXPENSE -> Color(0xFFFFEBEE)
-        UiTransactionType.TRANSFER -> Color(0xFFE3F2FD)
     }
     val amountColor = when (transaction.type) {
         UiTransactionType.INCOME -> Color(0xFF2E7D32)
         UiTransactionType.EXPENSE -> Color(0xFFC62828)
-        UiTransactionType.TRANSFER -> MaterialTheme.colorScheme.onSurface
     }
     val emoji = transaction.category?.iconEmoji ?: when (transaction.type) {
         UiTransactionType.INCOME -> "💰"
         UiTransactionType.EXPENSE -> "🛒"
-        UiTransactionType.TRANSFER -> "🔄"
     }
 
     Card(
@@ -407,7 +436,7 @@ private fun TransactionRowItem(
                 text = MoneyFormat.format(
                     amountMinor = transaction.amountMinor,
                     symbol = currencySymbol,
-                    showSign = !isTransfer,
+                    showSign = true,
                     isIncome = isIncome,
                     isMasked = isMasked
                 ),

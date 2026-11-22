@@ -16,12 +16,6 @@ import com.example.mymoneymanager.ui.model.UiTransactionType
             onDelete = ForeignKey.SET_NULL
         ),
         ForeignKey(
-            entity = AccountEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["destinationAccountId"],
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
             entity = CategoryEntity::class,
             parentColumns = ["id"],
             childColumns = ["categoryId"],
@@ -30,7 +24,6 @@ import com.example.mymoneymanager.ui.model.UiTransactionType
     ],
     indices = [
         Index("accountId"),
-        Index("destinationAccountId"),
         Index("categoryId"),
         Index("dateMillis")
     ]
@@ -43,7 +36,6 @@ data class TxnEntity(
     val dateMillis: Long,
     val accountId: Long?,
     val accountName: String = "",
-    val destinationAccountId: Long?,
     val categoryId: Long?,
     val note: String
 )

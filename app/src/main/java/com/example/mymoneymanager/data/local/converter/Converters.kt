@@ -18,7 +18,7 @@ class Converters {
 
     @TypeConverter
     fun stringToTransactionType(value: String?): UiTransactionType? =
-        value?.let { enumValueOf<UiTransactionType>(it) }
+        value?.let { runCatching { enumValueOf<UiTransactionType>(it) }.getOrNull() }
 
     @TypeConverter
     fun accountTypeToString(type: UiAccountType?): String? = type?.name

@@ -1,0 +1,91 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="140dp"
+    android:viewportWidth="200"
+    android:viewportHeight="140">
+
+    <!-- Abstract Financial Flow Lines (Low Opacity ~ 0.10) -->
+    <path
+        android:pathData="M 60,-10 C 100,30 130,5 170,40 C 190,58 200,85 210,120"
+        android:strokeWidth="2.5"
+        android:strokeColor="#1EFFFFFF"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M 90,-20 C 130,20 150,15 190,60 C 210,82 215,110 220,150"
+        android:strokeWidth="1.8"
+        android:strokeColor="#18FFFFFF"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M 30,30 C 70,60 110,40 150,85 C 175,112 185,135 195,160"
+        android:strokeWidth="1.5"
+        android:strokeColor="#14FFFFFF"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round" />
+
+    <!-- Faint Geometric Coin 1 (Top Right, Large) -->
+    <path
+        android:pathData="M165,30 m-22,0 a22,22 0 1,1 44,0 a22,22 0 1,1 -44,0"
+        android:strokeWidth="2"
+        android:strokeColor="#22FFFFFF"
+        android:fillColor="#0AFFFFFF" />
+    <path
+        android:pathData="M165,30 m-15,0 a15,15 0 1,1 30,0 a15,15 0 1,1 -30,0"
+        android:strokeWidth="1.2"
+        android:strokeColor="#1EFFFFFF"
+        android:fillColor="#00000000" />
+    <!-- Inner Coin Accent ($ shape or geometric diamond) -->
+    <path
+        android:pathData="M165,22 L168,30 L165,38 L162,30 Z"
+        android:fillColor="#22FFFFFF" />
+
+    <!-- Faint Geometric Coin 2 (Center Right, Medium) -->
+    <path
+        android:pathData="M130,85 m-14,0 a14,14 0 1,1 28,0 a14,14 0 1,1 -28,0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#1EFFFFFF"
+        android:fillColor="#08FFFFFF" />
+    <path
+        android:pathData="M130,85 m-9,0 a9,9 0 1,1 18,0 a9,9 0 1,1 -18,0"
+        android:strokeWidth="1"
+        android:strokeColor="#16FFFFFF"
+        android:fillColor="#00000000" />
+
+    <!-- Faint Geometric Coin 3 (Bottom Right, Small) -->
+    <path
+        android:pathData="M185,105 m-8,0 a8,8 0 1,1 16,0 a8,8 0 1,1 -16,0"
+        android:strokeWidth="1.2"
+        android:strokeColor="#1CFFFFFF"
+        android:fillColor="#08FFFFFF" />
+
+    <!-- Currency Sparkles (4-Point Stars, Low Opacity ~ 0.12) -->
+    <!-- Sparkle 1 -->
+    <path
+        android:pathData="M115,18 L117,23 L122,25 L117,27 L115,32 L113,27 L108,25 L113,23 Z"
+        android:fillColor="#26FFFFFF" />
+
+    <!-- Sparkle 2 -->
+    <path
+        android:pathData="M188,68 L189,72 L193,73 L189,74 L188,78 L187,74 L183,73 L187,72 Z"
+        android:fillColor="#24FFFFFF" />
+
+    <!-- Sparkle 3 (Small micro twinkle) -->
+    <path
+        android:pathData="M95,65 L96,68 L99,69 L96,70 L95,73 L94,70 L91,69 L94,68 Z"
+        android:fillColor="#1EFFFFFF" />
+
+    <!-- Micro Dot Sparkles -->
+    <path
+        android:pathData="M142,12 m-1.5,0 a1.5,1.5 0 1,1 3,0 a1.5,1.5 0 1,1 -3,0"
+        android:fillColor="#22FFFFFF" />
+    <path
+        android:pathData="M172,92 m-1.5,0 a1.5,1.5 0 1,1 3,0 a1.5,1.5 0 1,1 -3,0"
+        android:fillColor="#20FFFFFF" />
+    <path
+        android:pathData="M108,102 m-1.2,0 a1.2,1.2 0 1,1 2.4,0 a1.2,1.2 0 1,1 -2.4,0"
+        android:fillColor="#1AFFFFFF" />
+
+</vector>

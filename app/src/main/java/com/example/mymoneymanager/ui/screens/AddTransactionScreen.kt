@@ -80,7 +80,6 @@ import java.util.Locale
 private val ForestPrimary = Color(0xFF1E5E3A)
 private val IndonesianDateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.forLanguageTag("id-ID"))
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
     initialType: UiTransactionType = UiTransactionType.EXPENSE,
@@ -93,9 +92,8 @@ fun AddTransactionScreen(
         amountMinor: Long,
         date: LocalDate,
         sourceAccountId: Long?,
-        destinationAccountId: Long?,
         categoryId: Long?,
-        note: String
+        note: String,
     ) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -103,35 +101,28 @@ fun AddTransactionScreen(
     var amountText by rememberSaveable { mutableStateOf("") }
     var selectedDateValue by rememberSaveable { mutableStateOf(selectedDate.toString()) }
     var sourceAccountId by rememberSaveable { mutableStateOf<Long?>(null) }
-    var destinationAccountId by rememberSaveable { mutableStateOf<Long?>(null) }
     var selectedCategoryId by rememberSaveable { mutableStateOf<Long?>(null) }
     var note by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(accounts) {
-        if (sourceAccountId == null && accounts.isNotEmpty()) {
+        if ((sourceAccountId == null) && accounts.isNotEmpty()) {
             sourceAccountId = accounts.first().id
-        }
-        if (selectedType == UiTransactionType.TRANSFER && destinationAccountId == null && accounts.size > 1) {
-            destinationAccountId = accounts.firstOrNull { it.id != sourceAccountId }?.id
         }
     }
 
     LaunchedEffect(categories, selectedType) {
-        if (selectedType != UiTransactionType.TRANSFER && selectedCategoryId == null && categories.isNotEmpty()) {
+        if (selectedCategoryId == null && categories.isNotEmpty()) {
             selectedCategoryId = categories.first().id
         }
     }
 
-    val isTransfer = selectedType == UiTransactionType.TRANSFER
-    val requiresCategory = selectedType != UiTransactionType.TRANSFER
     val amountMinor = amountText.filter { it.isDigit() }.toLongOrNull() ?: 0L
 
     val amountError = amountMinor <= 0L
     val sourceError = sourceAccountId == null
-    val destinationError = isTransfer && (destinationAccountId == null || destinationAccountId == sourceAccountId)
-    val categoryError = requiresCategory && selectedCategoryId == null
+    val categoryError = selectedCategoryId == null
 
-    val canSave = !amountError && !sourceError && !destinationError && !categoryError
+    val canSave = !amountError && !sourceError && !categoryError
 
     val parsedDate = runCatching {
         LocalDate.parse(selectedDateValue)
@@ -158,8 +149,7 @@ fun AddTransactionScreen(
                         amountMinor,
                         parsedDate,
                         sourceAccountId,
-                        if (isTransfer) destinationAccountId else null,
-                        if (requiresCategory) selectedCategoryId else null,
+                        selectedCategoryId,
                         note.trim()
                     )
                 }
@@ -179,12 +169,7 @@ fun AddTransactionScreen(
                 selectedType = selectedType,
                 onTypeSelected = { type ->
                     selectedType = type
-                    if (type == UiTransactionType.TRANSFER) {
-                        selectedCategoryId = null
-                        if (destinationAccountId == null || destinationAccountId == sourceAccountId) {
-                            destinationAccountId = accounts.firstOrNull { it.id != sourceAccountId }?.id
-                        }
-                    } else if (selectedCategoryId == null && categories.isNotEmpty()) {
+                    if (selectedCategoryId == null && categories.isNotEmpty()) {
                         selectedCategoryId = categories.first().id
                     }
                 }
@@ -201,7 +186,7 @@ fun AddTransactionScreen(
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionLabel(text = if (isTransfer) "Dari Rekening" else "Rekening Sumber")
+                SectionLabel(text = "Rekening Sumber")
                 AccountSelector(
                     accounts = accounts,
                     selectedAccountId = sourceAccountId,
@@ -210,9 +195,6 @@ fun AddTransactionScreen(
                     isError = sourceError,
                     onAccountSelected = { account ->
                         sourceAccountId = account?.id
-                        if (destinationAccountId == sourceAccountId) {
-                            destinationAccountId = accounts.firstOrNull { it.id != sourceAccountId }?.id
-                        }
                     }
                 )
                 if (sourceError) {
@@ -220,42 +202,17 @@ fun AddTransactionScreen(
                 }
             }
 
-            if (isTransfer) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionLabel(text = "Ke Rekening Tujuan")
-                    AccountSelector(
-                        accounts = accounts.filter { it.id != sourceAccountId },
-                        selectedAccountId = destinationAccountId,
-                        currencySymbol = currencySymbol,
-                        placeholder = "Pilih rekening tujuan",
-                        isError = destinationError,
-                        onAccountSelected = { account -> destinationAccountId = account?.id }
-                    )
-                    if (destinationError) {
-                        FieldError(
-                            text = if (accounts.size < 2) {
-                                "Minimal diperlukan 2 rekening untuk melakukan transfer."
-                            } else {
-                                "Pilih rekening tujuan yang berbeda."
-                            }
-                        )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SectionLabel(text = "Kategori")
+                CategorySelector(
+                    categories = categories,
+                    selectedCategoryId = selectedCategoryId,
+                    onCategorySelected = { category ->
+                        selectedCategoryId = category?.id
                     }
-                }
-            }
-
-            if (requiresCategory) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionLabel(text = "Kategori")
-                    CategorySelector(
-                        categories = categories,
-                        selectedCategoryId = selectedCategoryId,
-                        onCategorySelected = { category ->
-                            selectedCategoryId = category?.id
-                        }
-                    )
-                    if (categoryError) {
-                        FieldError(text = "Pilih kategori transaksi.")
-                    }
+                )
+                if (categoryError) {
+                    FieldError(text = "Pilih kategori transaksi.")
                 }
             }
 
@@ -296,7 +253,6 @@ private fun AddTransactionTopBar(
                 text = when (selectedType) {
                     UiTransactionType.EXPENSE -> "Catat Pengeluaran"
                     UiTransactionType.INCOME -> "Catat Pemasukan"
-                    UiTransactionType.TRANSFER -> "Transfer Antar Rekening"
                 },
                 fontWeight = FontWeight.Bold
             )
@@ -325,8 +281,7 @@ private fun TransactionTypeSelector(
 ) {
     val options = listOf(
         UiTransactionType.EXPENSE to "Pengeluaran",
-        UiTransactionType.INCOME to "Pemasukan",
-        UiTransactionType.TRANSFER to "Transfer"
+        UiTransactionType.INCOME to "Pemasukan"
     )
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {

@@ -18,9 +18,13 @@ sealed interface StartState {
 }
 
 class MainViewModel(
-    repository: MoneyRepository,
+    private val repository: MoneyRepository,
     private val session: SessionState
 ) : ViewModel() {
+
+    suspend fun preload() {
+        repository.preload()
+    }
 
     val startState: StateFlow<StartState> = combine(
         repository.isOnboardingCompleted,

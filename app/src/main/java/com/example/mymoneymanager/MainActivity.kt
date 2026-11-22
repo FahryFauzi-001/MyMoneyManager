@@ -21,6 +21,8 @@ class MainActivity : FragmentActivity() {
         val container = (application as MyMoneyManagerApp).container
         val factory = ViewModelFactory(container)
 
+        val fromSplash = intent?.getBooleanExtra("from_splash", false) ?: false
+
         setContent {
             MyMoneyManagerTheme {
                 val mainViewModel: MainViewModel = viewModel(factory = factory)
@@ -28,7 +30,9 @@ class MainActivity : FragmentActivity() {
 
                 AppNavigation(
                     startState = startState,
-                    viewModelFactory = factory
+                    viewModelFactory = factory,
+                    showInitialSplash = !fromSplash,
+                    onPreload = { mainViewModel.preload() }
                 )
             }
         }
