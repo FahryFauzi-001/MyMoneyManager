@@ -2,8 +2,8 @@
 
 # 💰 MyMoneyManager
 
-**A minimalist, local-first personal finance tracker engineered for Android.**  
-*Zero bloat. Zero tracking. 100% offline financial clarity.*
+**Aplikasi pencatat keuangan pribadi yang minimalis dan *local-first*, dirancang khusus untuk Android.**  
+*Tanpa bloat. Tanpa pelacakan. 100% kejernihan finansial secara offline.*
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Android](https://img.shields.io/badge/Android-SDK%2026%20--%2037-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
@@ -15,36 +15,36 @@
 
 </div>
 
-## 📌 Overview
+## 📌 Ringkasan
 
-**MyMoneyManager** is a modern native Android application crafted with **Kotlin**, **Jetpack Compose (Material 3)**, and **Room Database**, following strict **MVVM Clean Architecture** principles.
+**MyMoneyManager** adalah aplikasi Android native modern yang dibangun dengan **Kotlin**, **Jetpack Compose (Material 3)**, dan **Room Database**, mengikuti prinsip **MVVM Clean Architecture** secara ketat.
 
-Most budget tracking applications are weighed down by bloated feature sets, opaque cloud syncing, and confusing transfer mechanics. **MyMoneyManager** strips away the unnecessary complexity to focus on what matters most: logging **Income (Pemasukan)** and **Expense (Pengeluaran)** with zero friction, instant balance recalculation, and complete local privacy.
-
----
-
-## ✨ Core Highlights
-
-- **🎯 Streamlined Transaction Engine (Income vs. Expense Only)**
-  Eliminates convoluted multi-account transfer topologies and internal loops. Transactions are strictly constrained to two deterministic states: `INCOME` and `EXPENSE`, ensuring clean bookkeeping and crystal-clear transaction histories.
-
-- **⚡ Instant Balance & Budget Computation**
-  Reactive aggregation pipelines powered by **Kotlin Coroutines** and **Room SQL Reactive Flows** ensure account balances, category breakdowns, and monthly expense budgets are recalculated with zero perceptible latency.
-
-- **✨ Branded Animated Splash & DB Preload**
-  On application launch, users are greeted with a lightweight, fluid Splash screen featuring the custom **MyMoneyManager** leather-fold wallet emblem with dual-tone currency flows and tagline (*"Kelola Keuangan Lebih Bijak"*). Preloads the Room database asynchronously and smoothly transitions directly to the main dashboard—eliminating unwanted redirects.
-
-- **🎨 Material 3 Elegance & Non-Interactive Decorative Accents**
-  Designed to solve flat UI fatigue by layering micro-vector financial illustrations (faint geometric coins, currency sparkles, and flowing ribbon lines) with low opacity (`alpha = 0.08 - 0.15`). All decorative layers enforce strict touch isolation (`clickable="false"`, `focusable="false"`, `importantForAccessibility="no"` / `clearAndSetSemantics`), preventing any click or scroll event hijacking.
-
-- **🔒 100% Local-First & Private**
-  Your financial data never leaves your device. Data is persisted exclusively in local SQLite storage managed by Room with automated schema migrations (`MIGRATION_1_2`, `MIGRATION_2_3`), backed by optional biometric / PIN security lock.
+Sebagian besar aplikasi pengelola anggaran terlalu berat dengan fitur berlebihan, sinkronisasi cloud yang tidak transparan, serta mekanisme transfer yang membingungkan. **MyMoneyManager** memangkas kerumitan yang tidak perlu agar fokus pada hal terpenting: mencatat **Pemasukan (Income)** dan **Pengeluaran (Expense)** dengan cepat, perhitungan saldo instan, dan privasi penuh secara lokal.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## ✨ Fitur Utama
 
-MyMoneyManager implements the official Android Architecture recommendations using **Unidirectional Data Flow (UDF)** and a clean separation of concerns:
+- **🎯 Mesin Transaksi Sederhana (Hanya Pemasukan & Pengeluaran)**
+  Menghilangkan skema transfer antar-akun yang rumit dan loop internal. Transaksi dibatasi secara tegas pada dua status deterministik: `INCOME` dan `EXPENSE`, sehingga pembukuan tetap bersih dan riwayat transaksi sangat mudah dipahami.
+
+- **⚡ Perhitungan Saldo & Anggaran Instan**
+  Pipeline agregasi reaktif yang ditenagai **Kotlin Coroutines** dan **Room SQL Reactive Flows** memastikan saldo akun, rincian kategori, dan anggaran pengeluaran bulanan dihitung ulang secara instan tanpa jeda.
+
+- **✨ Splash Screen Animasi & Preload Database**
+  Saat aplikasi dibuka, pengguna disambut layar Splash yang ringan dan mulus dengan logo dompet kulit lipat khas **MyMoneyManager**, aliran mata uang dua warna, serta tagline (*"Kelola Keuangan Lebih Bijak"*). Database Room dimuat secara asinkron di latar belakang dan langsung beralih mulus ke dashboard utama tanpa pengalihan yang mengganggu.
+
+- **🎨 Elegan dengan Material 3 & Aksen Dekoratif Non-Interaktif**
+  Dirancang agar tampilan tidak monoton dengan lapisan ilustrasi vektor finansial halus (koin geometris tipis, kilau mata uang, dan garis pita mengalir) beropasitas rendah (`alpha = 0.08 - 0.15`). Seluruh lapisan dekoratif menerapkan isolasi sentuhan ketat (`clickable="false"`, `focusable="false"`, `importantForAccessibility="no"` / `clearAndSetSemantics`) agar tidak mengganggu klik atau scroll.
+
+- **🔒 100% Local-First & Privat**
+  Data keuangan Anda tidak pernah meninggalkan perangkat. Seluruh data tersimpan eksklusif di penyimpanan SQLite lokal yang dikelola Room dengan migrasi skema otomatis (`MIGRATION_1_2`, `MIGRATION_2_3`), didukung opsi kunci keamanan biometrik / PIN.
+
+---
+
+## 🏗️ Arsitektur & Tech Stack
+
+MyMoneyManager menerapkan rekomendasi resmi Arsitektur Android menggunakan **Unidirectional Data Flow (UDF)** dengan pemisahan tanggung jawab yang bersih:
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -68,21 +68,21 @@ MyMoneyManager implements the official Android Architecture recommendations usin
 └────────────────────────────────────────────────────────┘
 ```
 
-### Technology Matrix
+### Matriks Teknologi
 
-| Layer | Technologies & Libraries |
+| Lapisan | Teknologi & Library |
 |---|---|
-| **Language & Tooling** | Kotlin 2.2.10, Gradle Version Catalogs (`libs.versions.toml`), KSP |
-| **UI & Theming** | Jetpack Compose (BOM 2026.02.01), Material Design 3, Compose Navigation |
-| **State Management** | `ViewModel`, `StateFlow`, `SharedFlow`/`Channel`, `collectAsStateWithLifecycle` |
-| **Local Persistence** | AndroidX Room 2.7.2 (Entities, TypeConverters, MIGRATION_2_3) |
-| **Preferences** | AndroidX DataStore Preferences 1.1.7 |
-| **Hardware & Security** | AndroidX Biometric 1.1.0 (`BiometricPrompt` with fallback PIN) |
-| **Asynchronous Engine** | Kotlin Coroutines, Kotlin Flow |
+| **Bahasa & Tooling** | Kotlin 2.2.10, Gradle Version Catalogs (`libs.versions.toml`), KSP |
+| **UI & Tema** | Jetpack Compose (BOM 2026.02.01), Material Design 3, Compose Navigation |
+| **Manajemen State** | `ViewModel`, `StateFlow`, `SharedFlow`/`Channel`, `collectAsStateWithLifecycle` |
+| **Penyimpanan Lokal** | AndroidX Room 2.7.2 (Entities, TypeConverters, MIGRATION_2_3) |
+| **Preferensi** | AndroidX DataStore Preferences 1.1.7 |
+| **Perangkat Keras & Keamanan** | AndroidX Biometric 1.1.0 (`BiometricPrompt` dengan fallback PIN) |
+| **Mesin Asinkron** | Kotlin Coroutines, Kotlin Flow |
 
 ---
 
-## 📂 Project Directory Structure
+## 📂 Struktur Direktori Proyek
 
 ```text
 mobile app/
@@ -90,94 +90,94 @@ mobile app/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/example/mymoneymanager/
-│   │   │   │   ├── MainActivity.kt                # Jetpack Compose single-activity container
-│   │   │   │   ├── SplashActivity.kt              # Dedicated lightweight Splash screen activity
-│   │   │   │   ├── MyMoneyManagerApp.kt           # Application class & DI container bootstrap
+│   │   │   │   ├── MainActivity.kt                # Container single-activity Jetpack Compose
+│   │   │   │   ├── SplashActivity.kt              # Activity khusus Splash screen ringan
+│   │   │   │   ├── MyMoneyManagerApp.kt           # Class Application & inisialisasi DI container
 │   │   │   │   ├── data/
 │   │   │   │   │   ├── local/
-│   │   │   │   │   │   ├── AppDatabase.kt         # Room database definition with v3 migrations
+│   │   │   │   │   │   ├── AppDatabase.kt         # Definisi Room database dengan migrasi v3
 │   │   │   │   │   │   ├── converter/             # Room TypeConverters (Enum, LocalDate)
 │   │   │   │   │   │   ├── dao/                   # Room DAOs (TxnDao, AccountDao, BudgetDao)
-│   │   │   │   │   │   ├── entity/                # Room entities (TxnEntity, AccountEntity, etc.)
+│   │   │   │   │   │   ├── entity/                # Room entities (TxnEntity, AccountEntity, dll.)
 │   │   │   │   │   │   └── preferences/           # UserPreferences via DataStore
-│   │   │   │   │   ├── mapper/                    # Entity <-> UI Model transformation mappers
+│   │   │   │   │   ├── mapper/                    # Mapper transformasi Entity <-> UI Model
 │   │   │   │   │   ├── repository/                # MoneyRepository (single source of truth)
-│   │   │   │   │   └── util/                      # Date & currency formatting utilities
+│   │   │   │   │   └── util/                      # Utilitas format tanggal & mata uang
 │   │   │   │   └── ui/
-│   │   │   │       ├── components/                # Modular Compose dialogs & pickers
-│   │   │   │       ├── model/                     # Immutable UI State models & UiTransactionType
-│   │   │   │       ├── navigation/                # Compose NavHost & route declarations
-│   │   │   │       ├── screens/                   # Screens (Splash, Transactions, AddTxn, etc.)
-│   │   │   │       ├── security/                  # Biometric authentication helper
-│   │   │   │       ├── theme/                     # Material 3 Color tokens, Type, Theme
-│   │   │   │       ├── util/                      # MoneyFormat, CurrencyCatalog, UI helpers
+│   │   │   │       ├── components/                # Dialog & picker Compose modular
+│   │   │   │       ├── model/                     # Model UI State immutable & UiTransactionType
+│   │   │   │       ├── navigation/                # Compose NavHost & deklarasi rute
+│   │   │   │       ├── screens/                   # Layar UI (Splash, Transactions, AddTxn, dll.)
+│   │   │   │       ├── security/                  # Helper autentikasi biometrik
+│   │   │   │       ├── theme/                     # Token warna Material 3, Tipografi, Tema
+│   │   │   │       ├── util/                      # MoneyFormat, CurrencyCatalog, helper UI
 │   │   │   │       └── viewmodel/                 # MVVM ViewModels & ViewModelFactory
 │   │   │   └── res/
 │   │   │       ├── drawable/
-│   │   │       │   ├── ic_mymoneymanager_logo.xml # Vector logo: wallet with dual-tone flow
-│   │   │       │   ├── ic_decorative_card_accents.xml # Faint geometric coins & sparkles overlay
-│   │   │       │   └── ic_decorative_empty_state.xml  # Decorative placeholder vector
+│   │   │       │   ├── ic_mymoneymanager_logo.xml # Logo vektor: dompet dengan aliran dua warna
+│   │   │       │   ├── ic_decorative_card_accents.xml # Overlay koin geometris & kilau tipis
+│   │   │       │   └── ic_decorative_empty_state.xml  # Vektor placeholder dekoratif
 │   │   │       ├── layout/
-│   │   │       │   ├── activity_splash.xml        # Splash screen layout
-│   │   │       │   ├── card_dashboard_balance.xml # Dashboard balance card layout
-│   │   │       │   └── layout_transaction_form.xml# Form layout (Income vs Expense chips)
+│   │   │       │   ├── activity_splash.xml        # Layout layar Splash
+│   │   │       │   ├── card_dashboard_balance.xml # Layout kartu saldo dashboard
+│   │   │       │   └── layout_transaction_form.xml# Layout formulir (chip Pemasukan vs Pengeluaran)
 │   │   │       └── values/                        # colors.xml, strings.xml, themes.xml
-│   │   └── test/                                  # Unit tests (TransactionValidationTest.kt)
-│   └── build.gradle.kts                           # App-level build configurations
+│   │   └── test/                                  # Unit test (TransactionValidationTest.kt)
+│   └── build.gradle.kts                           # Konfigurasi build tingkat aplikasi
 ├── gradle/
-│   └── libs.versions.toml                         # Centralized Gradle version catalog
-├── build.gradle.kts                               # Project-level build configuration
-├── settings.gradle.kts                            # Sub-project settings
+│   └── libs.versions.toml                         # Katalog versi Gradle terpusat
+├── build.gradle.kts                               # Konfigurasi build tingkat proyek
+├── settings.gradle.kts                            # Pengaturan sub-proyek
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start & Prerequisites
+## 🚀 Panduan Cepat & Prasyarat
 
-### Prerequisites
-- **Android Studio**: Ladybug (2024.2.1+) or Jellyfish (2024.1.1+)
-- **JDK**: OpenJDK 17 or 21
+### Prasyarat
+- **Android Studio**: Ladybug (2024.2.1+) atau Jellyfish (2024.1.1+)
+- **JDK**: OpenJDK 17 atau 21
 - **Android SDK**: Compile SDK `37`, Target SDK `37`, Min SDK `26` (Android 8.0 Oreo)
 
-### Build Instructions
+### Instruksi Build
 
-1. **Clone the Repository**
+1. **Clone Repositori**
    ```bash
    git clone https://github.com/FahryFauzi-001/MyMoneyManager.git
    cd MyMoneyManager/"mobile app"
    ```
 
-2. **Sync Project with Gradle Files**
-   Open the `mobile app` folder inside Android Studio and allow Gradle to sync dependencies defined in `gradle/libs.versions.toml`.
+2. **Sinkronisasi Proyek dengan Gradle**
+   Buka folder `mobile app` di Android Studio dan biarkan Gradle menyinkronkan dependensi yang didefinisikan pada `gradle/libs.versions.toml`.
 
-3. **Run Local Unit Tests**
+3. **Jalankan Unit Test Lokal**
    ```bash
    ./gradlew testDebugUnitTest
    ```
 
-4. **Assemble Debug APK**
+4. **Build Debug APK**
    ```bash
    ./gradlew assembleDebug
    ```
-   The generated APK will be available in:
+   File APK hasil build akan tersedia di:
    `app/build/outputs/apk/debug/app-debug.apk`
 
-5. **Deploy to Device / Emulator**
-   Press **Run** (`Shift + F10`) in Android Studio or install directly via ADB:
+5. **Jalankan di Perangkat / Emulator**
+   Tekan **Run** (`Shift + F10`) di Android Studio atau install langsung melalui ADB:
    ```bash
    adb install -r app/build/outputs/apk/debug/app-debug.apk
    ```
 
 ---
 
-## ⚖️ License
+## ⚖️ Lisensi
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more information.
+Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) untuk informasi lebih lanjut.
 
 ---
 
-## 👨‍💻 Author & Maintainer
+## 👨‍💻 Penulis & Pengelola
 
-Crafted with care by **[Fahry Fauzi](https://github.com/FahryFauzi-001)**.  
-Feedback, feature suggestions, and contributions are warmly welcome!
+Dibuat dengan sepenuh hati oleh **[Fahry Fauzi](https://github.com/FahryFauzi-001)**.  
+Masukan, saran fitur, dan kontribusi sangat terbuka dan diterima dengan senang hati!
